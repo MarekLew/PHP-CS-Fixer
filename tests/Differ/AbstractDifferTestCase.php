@@ -29,7 +29,7 @@ abstract class AbstractDifferTestCase extends TestCase
             str_replace(
                 'PhpCsFixer\\Tests\\Differ\\',
                 'PhpCsFixer\\Differ\\',
-                static::class
+                get_called_class()
             )
         );
 

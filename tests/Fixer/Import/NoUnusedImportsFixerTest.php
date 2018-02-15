@@ -447,28 +447,26 @@ EOF;
     }
 
     /**
-     * @param string $expected
+     * @param string      $expected
+     * @param null|string $input
      *
      * @dataProvider provideFixUseInStringCases
      */
-    public function testFixUseInString($expected)
+    public function testFixUseInString($expected, $input = null)
     {
-        $this->doTest($expected);
+        $this->doTest($expected, $input);
     }
 
     public function provideFixUseInStringCases()
     {
         $expected1 = <<<'EOF'
-<?php
 $x=<<<'EOA'
 use a;
 use b;
 EOA;
-
 EOF;
 
         $expected2 = <<<'EOF'
-<?php
 $x='
 use a;
 use b;
@@ -476,25 +474,16 @@ use b;
 EOF;
 
         $expected3 = <<<'EOF'
-<?php
 $x="
 use a;
 use b;
 ";
 EOF;
 
-        $expected4 = <<<'EOF'
-<?php
-namespace A;
-use \SplFileInfo;
-new SplFileInfo(__FILE__);
-EOF;
-
         return [
             [$expected1],
             [$expected2],
             [$expected3],
-            [$expected4],
         ];
     }
 
@@ -616,30 +605,15 @@ EOF;
     public function testFixWithComments()
     {
         $input = '<?php
-use# 1
-\# 2
-Exception# 3
-# 4
-
-
-
-
-
-  ;
-use /**/A\B/**/;
-  echo 1;
-  new B();
-';
+use#
+\#
+Exception#
+#
+;
+echo 1;';
 
         $expected = '<?php
-# 1
-# 2
-# 3
-# 4
-  use /**/A\B/**/;
-  echo 1;
-  new B();
-';
+echo 1;';
 
         $this->doTest($expected, $input);
     }
@@ -652,7 +626,6 @@ use /**/A\B/**/;
 namespace Foo;
 
 use Bar\C;
-/* test */
 
 abstract class D extends A implements C
 {
@@ -667,7 +640,7 @@ namespace Foo;
 
 use Bar\C;
 use Foo\A;
-use Foo\Bar\B /* test */ ;
+use Foo\Bar\B;
 
 abstract class D extends A implements C
 {
@@ -752,91 +725,5 @@ use Z;
 ',
             ],
         ];
-    }
-
-    public function testFunctionsInTheGlobalNamespaceShouldNotBeRemoved()
-    {
-        $expected = <<<'EOF'
-<?php
-
-namespace Foo;
-
-use function is_int;
-
-is_int(1);
-
-EOF;
-
-        $input = <<<'EOF'
-<?php
-
-namespace Foo;
-
-use function is_int;
-use function is_float;
-
-is_int(1);
-
-EOF;
-
-        $this->doTest($expected, $input);
-    }
-
-    public function testConstantsInTheGlobalNamespaceShouldNotBeRemoved()
-    {
-        $expected = <<<'EOF'
-<?php
-
-namespace Foo;
-
-use const PHP_INT_MAX;
-
-echo PHP_INT_MAX;
-
-EOF;
-
-        $input = <<<'EOF'
-<?php
-
-namespace Foo;
-
-use const PHP_INT_MAX;
-use const PHP_INT_MIN;
-
-echo PHP_INT_MAX;
-
-EOF;
-
-        $this->doTest($expected, $input);
-    }
-
-    public function testFunctionsInTheGlobalNamespaceShouldNotBeRemovedEvenWhenDeclarationHasNewLinesAndIsUppercase()
-    {
-        $expected = <<<'EOF'
-<?php
-
-namespace Foo;use/**/FUNCTION#1
-is_int;#2
-
-is_int(1);
-
-EOF;
-
-        $input = <<<'EOF'
-<?php
-
-namespace Foo;use/**/FUNCTION#1
-is_int;#2
-use function
-    is_float;
-use
-    const
-        PHP_INT_MIN;
-
-is_int(1);
-
-EOF;
-
-        $this->doTest($expected, $input);
     }
 }

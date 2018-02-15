@@ -41,7 +41,7 @@ final class PhpdocSingleLineVarSpacingFixer extends AbstractFixer
      */
     public function getPriority()
     {
-        // should be run after PhpdocNoAliasTagFixer.
+        // should be ran after PhpdocNoAliasTagFixer.
         return -10;
     }
 

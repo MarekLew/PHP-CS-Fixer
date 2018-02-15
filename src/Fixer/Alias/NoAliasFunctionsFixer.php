@@ -110,7 +110,7 @@ $a = strchr($haystack, $needle);
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        /** @var \PhpCsFixer\Tokenizer\Token $token */
+        /** @var $token \PhpCsFixer\Tokenizer\Token */
         foreach ($tokens->findGivenKind(T_STRING) as $index => $token) {
             // check mapping hit
             $tokenContent = strtolower($token->getContent());

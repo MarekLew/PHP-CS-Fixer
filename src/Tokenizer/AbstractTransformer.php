@@ -26,7 +26,7 @@ abstract class AbstractTransformer implements TransformerInterface
      */
     public function getName()
     {
-        $nameParts = explode('\\', static::class);
+        $nameParts = explode('\\', get_called_class());
         $name = substr(end($nameParts), 0, -strlen('Transformer'));
 
         return Utils::camelCaseToUnderscore($name);

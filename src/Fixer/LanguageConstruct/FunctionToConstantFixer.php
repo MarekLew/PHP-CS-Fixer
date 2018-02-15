@@ -19,7 +19,6 @@ use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -42,15 +41,10 @@ final class FunctionToConstantFixer extends AbstractFixer implements Configurati
     {
         if (null === self::$availableFunctions) {
             self::$availableFunctions = [
-                'get_called_class' => [
-                    new Token([T_STATIC, 'static']),
-                    new Token([T_DOUBLE_COLON, '::']),
-                    new Token([CT::T_CLASS_CONSTANT, 'class']),
-                ],
-                'get_class' => [new Token([T_CLASS_C, '__CLASS__'])],
-                'php_sapi_name' => [new Token([T_STRING, 'PHP_SAPI'])],
-                'phpversion' => [new Token([T_STRING, 'PHP_VERSION'])],
-                'pi' => [new Token([T_STRING, 'M_PI'])],
+                'get_class' => new Token([T_CLASS_C, '__CLASS__']),
+                'php_sapi_name' => new Token([T_STRING, 'PHP_SAPI']),
+                'phpversion' => new Token([T_STRING, 'PHP_VERSION']),
+                'pi' => new Token([T_STRING, 'M_PI']),
             ];
         }
 
@@ -148,39 +142,32 @@ final class FunctionToConstantFixer extends AbstractFixer implements Configurati
                 ->setAllowedValues([
                     (new FixerOptionValidatorGenerator())->allowedValueIsSubsetOf($functionNames),
                 ])
-                ->setDefault([
-                    'get_class',
-                    'php_sapi_name',
-                    'phpversion',
-                    'pi',
-                    // TODO on v3.0 add 'get_called_class' here
-                ])
+                ->setDefault($functionNames)
                 ->getOption(),
         ]);
     }
 
     /**
-     * @param Tokens  $tokens
-     * @param int     $index
-     * @param int     $braceOpenIndex
-     * @param int     $braceCloseIndex
-     * @param Token[] $replacements
+     * @param Tokens $tokens
+     * @param int    $index
+     * @param int    $braceOpenIndex
+     * @param int    $braceCloseIndex
+     * @param Token  $replacementConst
      */
-    private function fixFunctionCallToConstant(Tokens $tokens, $index, $braceOpenIndex, $braceCloseIndex, array $replacements)
+    private function fixFunctionCallToConstant(Tokens $tokens, $index, $braceOpenIndex, $braceCloseIndex, Token $replacementConst)
     {
         $tokens->clearTokenAndMergeSurroundingWhitespace($braceCloseIndex);
         $tokens->clearTokenAndMergeSurroundingWhitespace($braceOpenIndex);
 
-        if ($replacements[0]->isGivenKind([T_CLASS_C, T_STATIC])) {
+        if ($replacementConst->isMagicConstant()) {
             $prevIndex = $tokens->getPrevMeaningfulToken($index);
             $prevToken = $tokens[$prevIndex];
             if ($prevToken->isGivenKind(T_NS_SEPARATOR)) {
                 $tokens->clearAt($prevIndex);
             }
         }
-
         $tokens->clearAt($index);
-        $tokens->insertAt($index, $replacements);
+        $tokens->insertAt($index, $replacementConst);
     }
 
     /**
@@ -226,15 +213,10 @@ final class FunctionToConstantFixer extends AbstractFixer implements Configurati
             return null;
         }
 
-        $clones = [];
-        foreach ($this->functionsFixMap[$lowerContent] as $token) {
-            $clones[] = clone $token;
-        }
-
         return [
             $braceOpenIndex,
             $braceCloseIndex,
-            $clones,
+            clone $this->functionsFixMap[$lowerContent],
         ];
     }
 }

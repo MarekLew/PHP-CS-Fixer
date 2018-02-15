@@ -87,7 +87,7 @@ abstract class AbstractFixer implements FixerInterface, DefinedFixerInterface
      */
     public function getName()
     {
-        $nameParts = explode('\\', static::class);
+        $nameParts = explode('\\', get_called_class());
         $name = substr(end($nameParts), 0, -strlen('Fixer'));
 
         return Utils::camelCaseToUnderscore($name);

@@ -60,9 +60,8 @@ class Bar {}
      */
     public function getPriority()
     {
-        // should be run before the SingleBlankLineBeforeNamespaceFixer.
-        // should be run after the NoWhitespaceInBlankLineFixer.
-        return -20;
+        // should be ran before the SingleBlankLineBeforeNamespaceFixer.
+        return 1;
     }
 
     /**
@@ -79,7 +78,6 @@ class Bar {}
             T_GOTO,
             T_CONTINUE,
             T_BREAK,
-            T_DECLARE,
         ];
 
         foreach ($tokens as $index => $token) {
