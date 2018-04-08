@@ -15,7 +15,6 @@ namespace PhpCsFixer\Fixer\Alias;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -125,7 +124,7 @@ EOT
             }
             $content = $token->getContent();
             // Escaping special chars depends on the context: too tricky
-            if (Preg::match('/[`"\']/u', $content)) {
+            if (preg_match('/[`"\']/u', $content)) {
                 return;
             }
 

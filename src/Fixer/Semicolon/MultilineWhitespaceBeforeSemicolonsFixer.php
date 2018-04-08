@@ -19,7 +19,6 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -284,7 +283,7 @@ function foo () {
             $content = $tokens[$index]->getContent().$content;
         }
 
-        if (1 === Preg::match('/\R{1}([ \t]*)$/', $content, $matches)) {
+        if (1 === preg_match('/\R{1}([ \t]*)$/', $content, $matches)) {
             return $matches[1];
         }
 

@@ -102,25 +102,24 @@ final class MyTest extends \PHPUnit_Framework_TestCase
             $methodAfter = self::$assertionMap[$methodBefore];
 
             for ($index = 0, $limit = $tokens->count(); $index < $limit; ++$index) {
-                $methodIndex = $tokens->getNextTokenOfKind($index, [[T_STRING, $methodBefore]]);
+                $sequence = $tokens->findSequence(
+                    [
+                        [T_VARIABLE, '$this'],
+                        [T_OBJECT_OPERATOR, '->'],
+                        [T_STRING, $methodBefore],
+                        '(',
+                    ],
+                    $index
+                );
 
-                if (null === $methodIndex) {
+                if (null === $sequence) {
                     break;
                 }
 
-                $operatorIndex = $tokens->getPrevMeaningfulToken($methodIndex);
-                $referenceIndex = $tokens->getPrevMeaningfulToken($operatorIndex);
-                if (
-                    !($tokens[$operatorIndex]->equals([T_OBJECT_OPERATOR, '->']) && $tokens[$referenceIndex]->equals([T_VARIABLE, '$this']))
-                    && !($tokens[$operatorIndex]->equals([T_DOUBLE_COLON, '::']) && $tokens[$referenceIndex]->equals([T_STRING, 'self']))
-                    && !($tokens[$operatorIndex]->equals([T_DOUBLE_COLON, '::']) && $tokens[$referenceIndex]->equals([T_STATIC, 'static']))
-                ) {
-                    continue;
-                }
+                $sequenceIndexes = array_keys($sequence);
+                $tokens[$sequenceIndexes[2]] = new Token([T_STRING, $methodAfter]);
 
-                $tokens[$methodIndex] = new Token([T_STRING, $methodAfter]);
-
-                $index = $methodIndex;
+                $index = $sequenceIndexes[3];
             }
         }
     }

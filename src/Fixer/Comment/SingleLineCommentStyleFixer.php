@@ -19,7 +19,6 @@ use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -129,7 +128,7 @@ $c = 3;
                 !$this->asteriskEnabled
                 || false !== strpos($commentContent, '?>')
                 || '/*' !== substr($content, 0, 2)
-                || 1 === Preg::match('/[^\s\*].*\R.*[^\s\*]/s', $commentContent)
+                || 1 === preg_match('/[^\s\*].*\R.*[^\s\*]/s', $commentContent)
             ) {
                 continue;
             }
@@ -137,7 +136,7 @@ $c = 3;
             $nextTokenIndex = $index + 1;
             if (isset($tokens[$nextTokenIndex])) {
                 $nextToken = $tokens[$nextTokenIndex];
-                if (!$nextToken->isWhitespace() || 1 !== Preg::match('/\R/', $nextToken->getContent())) {
+                if (!$nextToken->isWhitespace() || 1 !== preg_match('/\R/', $nextToken->getContent())) {
                     continue;
                 }
 
@@ -145,8 +144,8 @@ $c = 3;
             }
 
             $content = '//';
-            if (1 === Preg::match('/[^\s\*]/', $commentContent)) {
-                $content = '// '.Preg::replace('/[\s\*]*([^\s\*](?:.+[^\s\*])?)[\s\*]*/', '\1', $commentContent);
+            if (1 === preg_match('/[^\s\*]/', $commentContent)) {
+                $content = '// '.preg_replace('/[\s\*]*([^\s\*](?:.+[^\s\*])?)[\s\*]*/', '\1', $commentContent);
             }
             $tokens[$index] = new Token([$token->getId(), $content]);
         }

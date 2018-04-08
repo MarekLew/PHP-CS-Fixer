@@ -174,7 +174,7 @@ final class IncrementStyleFixer extends AbstractFixer implements ConfigurationDe
 
             $blockType = Tokens::detectBlockType($token);
             if (null !== $blockType && !$blockType['isStart']) {
-                $index = $tokens->findBlockStart($blockType['type'], $index);
+                $index = $tokens->findBlockEnd($blockType['type'], $index, false);
                 $token = $tokens[$index];
             }
         } while (!$token->equalsAny(['$', [T_VARIABLE]]));

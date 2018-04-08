@@ -102,7 +102,7 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
         $close = $previous = $tokens->getPrevMeaningfulToken($index);
         // short 'if' detection
         if ($tokens[$close]->equals('}')) {
-            $previous = $tokens->findBlockStart(Tokens::BLOCK_TYPE_CURLY_BRACE, $close);
+            $previous = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $close, false);
         }
 
         $open = $tokens->getPrevTokenOfKind($previous, [[T_IF], [T_ELSE], [T_ELSEIF]]);
@@ -137,7 +137,7 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
         // token is always ')' here.
         // If it is part of the condition the token is always in, return false.
         // If it is not it is a nested condition so return true
-        $open = $tokens->findBlockStart(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $candidateIndex);
+        $open = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $candidateIndex, false);
 
         return $tokens->getPrevMeaningfulToken($open) > $lowerLimitIndex;
     }
@@ -185,9 +185,10 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
                     return false; // like `else {`
                 }
 
-                $index = $tokens->findBlockStart(
+                $index = $tokens->findBlockEnd(
                     Tokens::BLOCK_TYPE_PARENTHESIS_BRACE,
-                    $index
+                    $index,
+                    false
                 );
 
                 $index = $tokens->getPrevMeaningfulToken($index);
@@ -196,9 +197,10 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
                 }
             } elseif ($token->equals(')')) {
                 $type = Tokens::detectBlockType($token);
-                $index = $tokens->findBlockStart(
+                $index = $tokens->findBlockEnd(
                     $type['type'],
-                    $index
+                    $index,
+                    false
                 );
 
                 $index = $tokens->getPrevMeaningfulToken($index);

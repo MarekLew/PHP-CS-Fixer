@@ -23,7 +23,6 @@ use PhpCsFixer\Tokenizer\Transformers;
  *
  * @coversNothing
  * @group auto-review
- * @group covers-nothing
  */
 final class TransformerTest extends TestCase
 {

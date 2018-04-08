@@ -18,7 +18,6 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -76,7 +75,7 @@ EOF;
                 '"' === $content[0] &&
                 (true === $this->configuration['strings_containing_single_quote_chars'] || false === strpos($content, "'")) &&
                 // regex: odd number of backslashes, not followed by double quote or dollar
-                !Preg::match('/(?<!\\\\)(?:\\\\{2})*\\\\(?!["$\\\\])/', $content)
+                !preg_match('/(?<!\\\\)(?:\\\\{2})*\\\\(?!["$\\\\])/', $content)
             ) {
                 $content = substr($content, 1, -1);
                 $content = str_replace(['\\"', '\\$', '\''], ['"', '$', '\\\''], $content);

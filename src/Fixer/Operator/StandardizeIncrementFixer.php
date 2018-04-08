@@ -120,13 +120,13 @@ final class StandardizeIncrementFixer extends AbstractFixer
     {
         while (!$tokens[$index]->equalsAny(['$', [T_VARIABLE]])) {
             if ($tokens[$index]->equals(']')) {
-                $index = $tokens->findBlockStart(Tokens::BLOCK_TYPE_INDEX_SQUARE_BRACE, $index);
+                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_INDEX_SQUARE_BRACE, $index, false);
             } elseif ($tokens[$index]->isGivenKind(CT::T_DYNAMIC_PROP_BRACE_CLOSE)) {
-                $index = $tokens->findBlockStart(Tokens::BLOCK_TYPE_DYNAMIC_PROP_BRACE, $index);
+                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_DYNAMIC_PROP_BRACE, $index, false);
             } elseif ($tokens[$index]->isGivenKind(CT::T_DYNAMIC_VAR_BRACE_CLOSE)) {
-                $index = $tokens->findBlockStart(Tokens::BLOCK_TYPE_DYNAMIC_VAR_BRACE, $index);
+                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_DYNAMIC_VAR_BRACE, $index, false);
             } elseif ($tokens[$index]->isGivenKind(CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE)) {
-                $index = $tokens->findBlockStart(Tokens::BLOCK_TYPE_ARRAY_INDEX_CURLY_BRACE, $index);
+                $index = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_INDEX_CURLY_BRACE, $index, false);
             } else {
                 $index = $tokens->getPrevMeaningfulToken($index);
             }

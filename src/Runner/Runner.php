@@ -27,7 +27,7 @@ use PhpCsFixer\Linter\LintingException;
 use PhpCsFixer\Linter\LintingResultInterface;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
@@ -46,7 +46,7 @@ final class Runner
     private $directory;
 
     /**
-     * @var null|EventDispatcherInterface
+     * @var null|EventDispatcher
      */
     private $eventDispatcher;
 
@@ -89,7 +89,7 @@ final class Runner
         $finder,
         array $fixers,
         DifferInterface $differ,
-        EventDispatcherInterface $eventDispatcher = null,
+        EventDispatcher $eventDispatcher = null,
         ErrorsManager $errorsManager,
         LinterInterface $linter,
         $isDryRun,
@@ -226,11 +226,6 @@ final class Runner
         // work of other and both of them will mark collection as changed.
         // Therefore we need to check if code hashes changed.
         if ($oldHash !== $newHash) {
-            $fixInfo = [
-                'appliedFixers' => $appliedFixers,
-                'diff' => $this->differ->diff($old, $new),
-            ];
-
             try {
                 $this->linter->lintSource($new)->check();
             } catch (LintingException $e) {
@@ -239,7 +234,7 @@ final class Runner
                     new FixerFileProcessedEvent(FixerFileProcessedEvent::STATUS_LINT)
                 );
 
-                $this->errorsManager->report(new Error(Error::TYPE_LINT, $name, $e, $fixInfo['appliedFixers'], $fixInfo['diff']));
+                $this->errorsManager->report(new Error(Error::TYPE_LINT, $name, $e));
 
                 return;
             }
@@ -256,6 +251,11 @@ final class Runner
                     );
                 }
             }
+
+            $fixInfo = [
+                'appliedFixers' => $appliedFixers,
+                'diff' => $this->differ->diff($old, $new),
+            ];
         }
 
         $this->cacheManager->setFile($name, $new);

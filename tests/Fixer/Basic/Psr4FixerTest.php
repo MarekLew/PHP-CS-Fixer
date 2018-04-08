@@ -26,8 +26,7 @@ final class Psr4FixerTest extends AbstractFixerTestCase
 {
     public function testFixCase()
     {
-        $fileProphecy = $this->prophesize();
-        $fileProphecy->willExtend(\SplFileInfo::class);
+        $fileProphecy = $this->prophesize(\SplFileInfo::class);
         $fileProphecy->getBasename()->willReturn('Bar.php');
         $fileProphecy->getRealPath()->willReturn(__DIR__.'/Psr4/Foo/Bar.php');
         $file = $fileProphecy->reveal();

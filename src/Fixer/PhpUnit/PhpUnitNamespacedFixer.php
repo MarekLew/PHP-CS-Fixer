@@ -18,7 +18,6 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -105,7 +104,7 @@ final class MyTest extends \PHPUnit_Framework_TestCase
 
             $originalClass = $tokens[$currIndex]->getContent();
 
-            if (1 !== Preg::match($this->originalClassRegEx, $originalClass)) {
+            if (1 !== preg_match($this->originalClassRegEx, $originalClass)) {
                 ++$currIndex;
 
                 continue;

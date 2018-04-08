@@ -32,7 +32,6 @@ use PhpCsFixer\Tokenizer\Tokens;
  *
  * @coversNothing
  * @group auto-review
- * @group covers-nothing
  */
 final class FixerTest extends TestCase
 {
@@ -250,6 +249,8 @@ final class FixerTest extends TestCase
     }
 
     /**
+     * copy paste from GeckoPackages/GeckoPHPUnit StringsAssertTrait, to replace with Trait when possible.
+     *
      * @param mixed  $actual
      * @param string $message
      */

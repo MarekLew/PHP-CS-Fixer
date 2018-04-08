@@ -20,7 +20,6 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Utils;
@@ -131,8 +130,8 @@ final class PhpdocTypesOrderFixer extends AbstractFixer implements Configuration
 
                 // fix @method parameters types
                 $line = $doc->getLine($annotation->getStart());
-                $line->setContent(Preg::replaceCallback('/(@method\s+.+?\s+\w+\()(.*)\)/', function (array $matches) {
-                    $sorted = Preg::replaceCallback('/((?:^|,)\s*)([^\s]+)/', function (array $matches) {
+                $line->setContent(preg_replace_callback('/(@method\s+.+?\s+\w+\()(.*)\)/', function (array $matches) {
+                    $sorted = preg_replace_callback('/((?:^|,)\s*)([^\s]+)/', function (array $matches) {
                         return $matches[1].$this->sortJoinedTypes($matches[2]);
                     }, $matches[2]);
 
@@ -152,7 +151,7 @@ final class PhpdocTypesOrderFixer extends AbstractFixer implements Configuration
     private function sortTypes(array $types)
     {
         foreach ($types as $index => $type) {
-            $types[$index] = Preg::replaceCallback('/^([^<]+)<(?:(.+?)(,\s*))?(.*)>$/', function (array $matches) {
+            $types[$index] = preg_replace_callback('/^([^<]+)<(?:(.+?)(,\s*))?(.*)>$/', function (array $matches) {
                 return $matches[1].'<'.$this->sortJoinedTypes($matches[2]).$matches[3].$this->sortJoinedTypes($matches[4]).'>';
             }, $type);
         }
@@ -165,8 +164,8 @@ final class PhpdocTypesOrderFixer extends AbstractFixer implements Configuration
                     $regexp = '/^\\??\\\?/';
 
                     return strcasecmp(
-                        Preg::replace($regexp, '', $typeA),
-                        Preg::replace($regexp, '', $typeB)
+                        preg_replace($regexp, '', $typeA),
+                        preg_replace($regexp, '', $typeB)
                     );
                 }
             );
@@ -175,7 +174,7 @@ final class PhpdocTypesOrderFixer extends AbstractFixer implements Configuration
         if ('none' !== $this->configuration['null_adjustment']) {
             $nulls = [];
             foreach ($types as $index => $type) {
-                if (Preg::match('/^\\\?null$/i', $type)) {
+                if (preg_match('/^\\\?null$/i', $type)) {
                     $nulls[$index] = $type;
                     unset($types[$index]);
                 }
@@ -201,7 +200,7 @@ final class PhpdocTypesOrderFixer extends AbstractFixer implements Configuration
     private function sortJoinedTypes($types)
     {
         $types = array_filter(
-            Preg::split('/([^|<]+(?:<.*>)?)/', $types, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY),
+            preg_split('/([^|<]+(?:<.*>)?)/', $types, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY),
             static function ($value) {
                 return '|' !== $value;
             }

@@ -23,7 +23,6 @@ use Symfony\Component\Console\Tester\CommandTester;
  *
  * @coversNothing
  * @group auto-review
- * @group covers-nothing
  */
 final class DescribeCommandTest extends TestCase
 {

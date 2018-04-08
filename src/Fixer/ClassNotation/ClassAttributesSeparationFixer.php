@@ -20,7 +20,6 @@ use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerConfiguration\FixerOptionValidatorGenerator;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -333,7 +332,7 @@ class Sample
         if (1 === $numbOfWhiteTokens) {
             $tokens[$startIndex] = new Token([
                 T_WHITESPACE,
-                Preg::replace('/\r\n|\n/', '', $tokens[$startIndex]->getContent(), $lineBreakCount - $reqLineCount),
+                preg_replace('/\r\n|\n/', '', $tokens[$startIndex]->getContent(), $lineBreakCount - $reqLineCount),
             ]);
 
             return;
@@ -346,7 +345,7 @@ class Sample
             if ($tokenLineCount > 0) {
                 $tokens[$i] = new Token([
                     T_WHITESPACE,
-                    Preg::replace('/\r\n|\n/', '', $tokens[$i]->getContent(), min($toReplaceCount, $tokenLineCount)),
+                    preg_replace('/\r\n|\n/', '', $tokens[$i]->getContent(), min($toReplaceCount, $tokenLineCount)),
                 ]);
                 $toReplaceCount -= $tokenLineCount;
             }

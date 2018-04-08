@@ -12,8 +12,6 @@
 
 namespace PhpCsFixer\DocBlock;
 
-use PhpCsFixer\Preg;
-
 /**
  * This represents an entire annotation from a docblock.
  *
@@ -198,7 +196,7 @@ class Annotation
             $content = $this->getTypesContent();
 
             while ('' !== $content && false !== $content) {
-                Preg::match(
+                preg_match(
                     '{^'.self::REGEX_TYPES.'$}x',
                     $content,
                     $matches
@@ -221,7 +219,7 @@ class Annotation
     {
         $pattern = '/'.preg_quote($this->getTypesContent(), '/').'/';
 
-        $this->lines[0]->setContent(Preg::replace($pattern, implode('|', $types), $this->lines[0]->getContent(), 1));
+        $this->lines[0]->setContent(preg_replace($pattern, implode('|', $types), $this->lines[0]->getContent(), 1));
 
         $this->clearCache();
     }
@@ -269,7 +267,7 @@ class Annotation
                 throw new \RuntimeException('This tag does not support types.');
             }
 
-            $matchingResult = Preg::match(
+            $matchingResult = preg_match(
                 '{^(?:\s*\*|/\*\*)\s*@'.$name.'\s+'.self::REGEX_TYPES.'(?:[ \t].*)?$}sx',
                 $this->lines[0]->getContent(),
                 $matches

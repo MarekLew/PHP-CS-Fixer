@@ -22,7 +22,6 @@ use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Indicator\PhpUnitTestCaseIndicator;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -59,7 +58,7 @@ class Test extends \\PhpUnit\\FrameWork\\TestCase
 class Test extends \\PhpUnit\\FrameWork\\TestCase
 {
 public function testItDoesSomething() {}}'.$this->whitespacesConfig->getLineEnding(), ['style' => 'annotation']),
-            ],
+                ],
             null,
             'This fixer may change the name of your tests, and could cause incompatibility with'.
             ' abstract classes or interfaces.'
@@ -317,7 +316,7 @@ public function testItDoesSomething() {}}'.$this->whitespacesConfig->getLineEndi
      */
     private function removeTestPrefix($functionName)
     {
-        $remainder = Preg::replace('/^test_?/', '', $functionName);
+        $remainder = preg_replace('/^test_?/', '', $functionName);
 
         if ('' === $remainder || is_numeric($remainder[0])) {
             return $functionName;

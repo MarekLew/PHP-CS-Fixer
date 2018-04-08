@@ -16,7 +16,6 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -91,17 +90,17 @@ final class IndentationTypeFixer extends AbstractFixer implements WhitespacesAwa
      */
     private function fixIndentInComment(Tokens $tokens, $index)
     {
-        $content = Preg::replace('/^(?:(?<! ) {1,3})?\t/m', '\1    ', $tokens[$index]->getContent(), -1, $count);
+        $content = preg_replace('/^(?:(?<! ) {1,3})?\t/m', '\1    ', $tokens[$index]->getContent(), -1, $count);
 
         // Also check for more tabs.
         while (0 !== $count) {
-            $content = Preg::replace('/^(\ +)?\t/m', '\1    ', $content, -1, $count);
+            $content = preg_replace('/^(\ +)?\t/m', '\1    ', $content, -1, $count);
         }
 
         $indent = $this->indent;
 
         // change indent to expected one
-        $content = Preg::replaceCallback('/^(?:    )+/m', static function ($matches) use ($indent) {
+        $content = preg_replace_callback('/^(?:    )+/m', static function ($matches) use ($indent) {
             return str_replace('    ', $indent, $matches[0]);
         }, $content);
 
@@ -126,11 +125,11 @@ final class IndentationTypeFixer extends AbstractFixer implements WhitespacesAwa
         }
 
         $indent = $this->indent;
-        $newContent = Preg::replaceCallback(
+        $newContent = preg_replace_callback(
             '/(\R)(\h+)/', // find indent
             static function (array $matches) use ($indent) {
                 // normalize mixed indent
-                $content = Preg::replace('/(?:(?<! ) {1,3})?\t/', '    ', $matches[2]);
+                $content = preg_replace('/(?:(?<! ) {1,3})?\t/', '    ', $matches[2]);
 
                 // change indent to expected one
                 return $matches[1].str_replace('    ', $indent, $content);

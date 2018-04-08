@@ -20,9 +20,8 @@ use PHPUnit\Framework\TestCase;
  *
  * @internal
  *
- * @requires OS Linux|Darwin
  * @coversNothing
- * @group covers-nothing
+ * @requires OS Linux|Darwin
  */
 final class StdinTest extends TestCase
 {

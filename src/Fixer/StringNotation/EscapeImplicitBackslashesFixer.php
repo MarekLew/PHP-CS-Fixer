@@ -18,7 +18,6 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -135,7 +134,7 @@ EOF;
                 $regex = $doubleQuotedRegex;
             }
 
-            $newContent = Preg::replace($regex, '\\\\\\\\', $content);
+            $newContent = preg_replace($regex, '\\\\\\\\', $content);
             if ($newContent !== $content) {
                 $tokens[$index] = new Token([$token->getId(), $newContent]);
             }

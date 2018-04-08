@@ -21,7 +21,6 @@ use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\VersionSpecification;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSample;
-use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\CT;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -47,8 +46,6 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
 
     const SORT_LENGTH = 'length';
 
-    const SORT_NONE = 'none';
-
     /**
      * Array of supported sort types in configuration.
      *
@@ -61,7 +58,7 @@ final class OrderedImportsFixer extends AbstractFixer implements ConfigurationDe
      *
      * @var string[]
      */
-    private $supportedSortAlgorithms = [self::SORT_ALPHA, self::SORT_LENGTH, self::SORT_NONE];
+    private $supportedSortAlgorithms = [self::SORT_ALPHA, self::SORT_LENGTH];
 
     /**
      * {@inheritdoc}
@@ -122,28 +119,6 @@ use function CCC\AA;
                     new VersionSpecification(70000),
                     [
                         'sortAlgorithm' => self::SORT_ALPHA,
-                        'importsOrder' => [
-                            self::IMPORT_TYPE_CONST,
-                            self::IMPORT_TYPE_CLASS,
-                            self::IMPORT_TYPE_FUNCTION,
-                        ],
-                    ]
-                ),
-                new VersionSpecificCodeSample(
-                    '<?php
-use const BBB;
-use const AAAA;
-
-use function DDD;
-use function CCC\AA;
-
-use Acme;
-use AAC;
-use Bar;
-',
-                    new VersionSpecification(70000),
-                    [
-                        'sortAlgorithm' => self::SORT_NONE,
                         'importsOrder' => [
                             self::IMPORT_TYPE_CONST,
                             self::IMPORT_TYPE_CLASS,
@@ -228,7 +203,7 @@ use Bar;
         $supportedSortTypes = $this->supportedSortTypes;
 
         return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length, or not sorted'))
+            (new FixerOptionBuilder('sortAlgorithm', 'whether the statements should be sorted alphabetically or by length'))
                 ->setAllowedValues($this->supportedSortAlgorithms)
                 ->setDefault(self::SORT_ALPHA)
                 ->getOption(),
@@ -319,7 +294,7 @@ use Bar;
      */
     private function prepareNamespace($namespace)
     {
-        return trim(Preg::replace('%/\*(.*)\*/%s', '', $namespace));
+        return trim(preg_replace('%/\*(.*)\*/%s', '', $namespace));
     }
 
     private function getNewOrder(array $uses, Tokens $tokens)
@@ -351,7 +326,7 @@ use Bar;
                 $token = $tokens[$index];
 
                 if ($index === $endIndex || (!$group && $token->equals(','))) {
-                    if ($group && self::SORT_NONE !== $this->configuration['sortAlgorithm']) {
+                    if ($group) {
                         // if group import, sort the items within the group definition
 
                         // figure out where the list of namespace parts within the group def. starts
@@ -502,6 +477,8 @@ use Bar;
             uasort($indexes, [$this, 'sortAlphabetically']);
         } elseif (self::SORT_LENGTH === $this->configuration['sortAlgorithm']) {
             uasort($indexes, [$this, 'sortByLength']);
+        } else {
+            throw new \LogicException(sprintf('Sort algorithm "%s" is not supported.', $this->configuration['sortAlgorithm']));
         }
 
         return $indexes;

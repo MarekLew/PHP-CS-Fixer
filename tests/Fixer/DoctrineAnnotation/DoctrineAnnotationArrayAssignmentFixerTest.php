@@ -50,7 +50,7 @@ final class DoctrineAnnotationArrayAssignmentFixerTest extends AbstractDoctrineA
      */
     public function provideFixCases()
     {
-        $cases = $this->createTestCases([
+        return $this->createTestCases([
             ['
 /**
  * @Foo
@@ -104,17 +104,6 @@ final class DoctrineAnnotationArrayAssignmentFixerTest extends AbstractDoctrineA
  * See {@link http://help Help} or {@see BarClass} for details.
  */'],
         ]);
-
-        $cases[] = [
-            '<?php
-
-/**
-* @see \User getId()
-*/
-',
-        ];
-
-        return $cases;
     }
 
     /**
